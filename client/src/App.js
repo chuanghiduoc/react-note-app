@@ -30,6 +30,8 @@ function App() {
           path="/"
           element={isUserAuthenticated() ? <NoteList /> : <Navigate to="/login" />}
         />
+        {/* Xử lý các trang ngoại lệ */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   );

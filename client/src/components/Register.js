@@ -1,42 +1,54 @@
-// Register.js
-import React, { useState } from 'react';
+import React from 'react';
+import { Form, Input, Button } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const onFinish = async (values) => {
     try {
       await axios.post('http://localhost:3001/api/auth/register', {
-        username,
-        password,
+        username: values.username,
+        password: values.password,
       });
       // Nếu thành công, chuyển hướng đến trang `/login`
-      navigate('/login'); 
+      navigate('/login');
     } catch (error) {
-      console.error('Đăng kí thất bại', error);
+      console.error('Đăng ký thất bại', error);
     }
   };
 
   return (
     <div>
-      <h2>Đăng kí</h2>
-      <input
-        type="text"
-        placeholder="Tên đăng nhập"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Mật khẩu"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleRegister}>Đăng kí</button>
+      <h2>Đăng ký</h2>
+      <Form
+        form={form}
+        name="registerForm"
+        onFinish={onFinish}
+      >
+        <Form.Item
+          name="username"
+          rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
+        >
+          <Input placeholder="Tên đăng nhập" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+        >
+          <Input.Password placeholder="Mật khẩu" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Đăng ký
+          </Button>
+          <Button type="link" onClick={() => navigate('/login')}>
+            Đăng nhập
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 };

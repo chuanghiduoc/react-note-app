@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
         expiresIn: '1h',
       });
   
-      res.status(200).json({ message: 'Đăng nhập thành công.', token });
+      res.status(200).json({ message: 'Đăng nhập thành công.', token, username: user.username });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Đã xảy ra lỗi khi đăng nhập.' });

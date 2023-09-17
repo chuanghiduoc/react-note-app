@@ -6,6 +6,10 @@ import { Form, Input, Button, List } from 'antd';
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
+
+  // Lấy username từ localStorage
+  const username = localStorage.getItem('username');
+
   // Lấy token từ localStorage
   const token = localStorage.getItem('token');
   
@@ -48,10 +52,17 @@ const NoteList = () => {
         console.error('Không thể thêm ghi chú', error);
       });
   };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    // Làm mới trang sau khi đăng xuất
+    window.location.reload();
 
+  };
   return (
     <div>
-      <h2>Mời thí chủ test</h2>
+      <h2>Hi, {username} - Mời thí chủ test</h2>
+
       <Form onFinish={handleAddNote}>
         <Form.Item>
           <Input.TextArea
@@ -63,6 +74,7 @@ const NoteList = () => {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">Thêm Ghi Chú</Button>
+          <Button type="link" danger onClick={handleLogout}>Đăng Xuất</Button>
         </Form.Item>
       </Form>
       <List

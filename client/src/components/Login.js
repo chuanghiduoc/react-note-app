@@ -1,19 +1,24 @@
-// Login.js
-import React, { useState } from 'react';
+import React from 'react';
 import axios from 'axios';
+import { Form, Input, Button } from 'antd';
+import { useNavigate } from 'react-router-dom'; // Import useHistory để thực hiện chuyển hướng
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async () => {
+  const [form] = Form.useForm();
+  const navigate = useNavigate(); // Lấy đối tượng history để thực hiện chuyển hướng
+  const handleNavigate = () => {
+    // Sử dụng navigate để chuyển hướng đến một trang khác
+    navigate('/register');
+  };
+  const onFinish = async (values) => {
     try {
       const response = await axios.post('http://localhost:3001/api/auth/login', {
-        username,
-        password,
+        username: values.username,
+        password: values.password,
       });
       // Kiểm tra kết quả từ API và lưu thông tin đăng nhập (token, user) vào localStorage
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', values.username);
       window.location.reload();
     } catch (error) {
       console.error('Đăng nhập thất bại', error);
@@ -23,19 +28,32 @@ const Login = () => {
   return (
     <div>
       <h2>Đăng nhập</h2>
-      <input
-        type="text"
-        placeholder="Tên đăng nhập"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Mật khẩu"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Đăng nhập</button>
+      <Form
+        form={form}
+        name="loginForm"
+        onFinish={onFinish}
+      >
+        <Form.Item
+          name="username"
+          rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
+        >
+          <Input placeholder="Tên đăng nhập" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+        >
+          <Input.Password placeholder="Mật khẩu" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Đăng nhập
+          </Button>
+          <Button type="link" onClick={handleNavigate}>
+            Đăng ký
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 };
