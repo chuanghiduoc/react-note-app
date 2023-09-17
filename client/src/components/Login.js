@@ -1,27 +1,30 @@
 import React from 'react';
 import axios from 'axios';
-import { Form, Input, Button } from 'antd';
-import { useNavigate } from 'react-router-dom'; // Import useHistory để thực hiện chuyển hướng
+import { Form, Input, Button, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [form] = Form.useForm();
-  const navigate = useNavigate(); // Lấy đối tượng history để thực hiện chuyển hướng
+  const navigate = useNavigate();
+
   const handleNavigate = () => {
-    // Sử dụng navigate để chuyển hướng đến một trang khác
     navigate('/register');
   };
+
   const onFinish = async (values) => {
     try {
       const response = await axios.post('http://localhost:3001/api/auth/login', {
         username: values.username,
         password: values.password,
       });
+      
       // Kiểm tra kết quả từ API và lưu thông tin đăng nhập (token, user) vào localStorage
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', values.username);
       window.location.reload();
     } catch (error) {
       console.error('Đăng nhập thất bại', error);
+      message.error('Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.');
     }
   };
 

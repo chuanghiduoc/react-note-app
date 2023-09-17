@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ const Register = () => {
       navigate('/login');
     } catch (error) {
       console.error('Đăng ký thất bại', error);
+      message.error('Đăng ký thất bại. Vui lòng thử lại sau.');
     }
   };
 
