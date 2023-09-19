@@ -9,12 +9,18 @@ const Register = () => {
 
   const onFinish = async (values) => {
     try {
-      await axios.post('http://localhost:3001/api/auth/register', {
+      const response = await axios.post('http://localhost:3001/api/auth/register', {
         username: values.username,
         password: values.password,
       });
+
       // Nếu thành công, chuyển hướng đến trang `/login`
-      navigate('/login');
+      // navigate('/login');
+
+      //register xong tự login bằng token vào home
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', values.username);
+      window.location.reload();
     } catch (error) {
       console.error('Đăng ký thất bại', error);
       message.error('Đăng ký thất bại. Vui lòng thử lại sau.');

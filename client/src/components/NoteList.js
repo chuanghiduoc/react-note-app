@@ -16,6 +16,7 @@ const NoteList = () => {
   // Giải mã token để lấy userId
   const decodedToken = jwt_decode(token);
   const userId = decodedToken.userId;
+  
   useEffect(() => {
     // Gửi yêu cầu GET để lấy danh sách các ghi chú của người dùng
     axios.get(`http://localhost:3001/api/notes/${userId}`)

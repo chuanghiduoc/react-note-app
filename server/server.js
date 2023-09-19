@@ -39,6 +39,7 @@ const NoteSchema = new mongoose.Schema({
   userId: String,
   content: String,
 });
+
 const Note = mongoose.model('Note', NoteSchema);
 
 // Thêm ghi chú

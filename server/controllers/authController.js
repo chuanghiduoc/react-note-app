@@ -18,8 +18,15 @@ exports.register = async (req, res) => {
   
       const newUser = new User({ username, password });
       await newUser.save();
-  
-      res.status(201).json({ message: 'Đăng ký thành công.' });
+
+      // find user
+      const user = await User.findOne({ username });
+      //save token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+
+      res.status(201).json({ message: 'Đăng ký thành công. ' , token, username: user.username});
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Đã xảy ra lỗi khi đăng ký.' });
