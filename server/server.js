@@ -51,9 +51,10 @@ const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoute);
 
-//Notes
+// Notes
 const NoteSchema = new mongoose.Schema({
   userId: String,
+  title: String, // Thêm trường title vào schema
   content: String,
   password: String,
   shareableLink: String, // Thêm trường shareableLink vào schema
@@ -64,13 +65,14 @@ const Note = mongoose.model('Note', NoteSchema);
 // Thêm ghi chú
 app.post('/api/notes', async (req, res) => {
   try {
-    const { userId, content, password } = req.body;
+    const { userId, title, content, password } = req.body; // Thêm title vào đây
 
     // Tạo một đường dẫn chia sẻ duy nhất
     const shareableLink = await generateUniqueShareableLink();
 
     const newNote = new Note({
       userId,
+      title, // Lưu title vào ghi chú
       content,
       password,
       shareableLink, // Lưu đường dẫn chia sẻ vào ghi chú
@@ -90,6 +92,7 @@ app.get('/api/notes/:userId', async (req, res) => {
     const notes = await Note.find({ userId });
     const sanitizedNotes = notes.map((note) => ({
       _id: note._id,
+      title: note.title, // Bao gồm title
       content: note.content,
       shareableLink: note.shareableLink, // Bao gồm đường dẫn chia sẻ
     }));
@@ -120,11 +123,11 @@ app.put('/api/notes/:userId/:noteId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const noteId = req.params.noteId;
-    const { content, password } = req.body;
+    const { title, content, password } = req.body; // Thêm title vào đây
 
     const updatedNote = await Note.findOneAndUpdate(
       { _id: noteId, userId },
-      { content, password },
+      { title, content, password }, // Thêm title vào đây
       { new: true }
     );
 
@@ -180,11 +183,12 @@ app.get('/api/share/:shareableLink', async (req, res) => {
     }
 
     // Trả về nội dung của ghi chú
-    res.json({ content: note.content });
+    res.json({ title: note.title, content: note.content }); // Bao gồm title
   } catch (error) {
     res.status(500).json({ error: 'Failed to access note' });
   }
 });
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

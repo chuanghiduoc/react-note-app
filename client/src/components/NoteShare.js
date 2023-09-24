@@ -6,6 +6,7 @@ import { Form, Input, Button, message } from 'antd';
 const NoteShare = () => {
   const { shareableLink } = useParams();
   const [password, setPassword] = useState('');
+  const [noteTitle, setNoteTitle] = useState(''); // Thêm state cho nhan đề
   const [noteContent, setNoteContent] = useState('');
   const [displayContent, setDisplayContent] = useState(false);
 
@@ -15,7 +16,9 @@ const NoteShare = () => {
         params: { password },
       })
       .then((response) => {
-        setNoteContent(response.data.content);
+        const { title, content } = response.data;
+        setNoteTitle(title); // Cập nhật state nhan đề từ phản hồi của API
+        setNoteContent(content);
         setDisplayContent(true);
       })
       .catch((err) => {
@@ -34,8 +37,8 @@ const NoteShare = () => {
     <div>
       {displayContent ? (
         <div>
-          <h2>Nội dung ghi chú:</h2>
-          <p>{noteContent}</p>
+          <h1>{noteTitle}</h1> {/* Hiển thị nhan đề */}
+          <p style={{ whiteSpace: 'pre-wrap' }}>{noteContent}</p>
         </div>
       ) : (
         <div>

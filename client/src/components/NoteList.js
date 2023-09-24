@@ -7,10 +7,12 @@ import '../utils/css/css.css';
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({
+    title: '', // Thêm trường tiêu đề
     content: '',
     password: '', // Thêm trường mật khẩu
   });
   const [editingNote, setEditingNote] = useState(null); // Ghi chú đang chỉnh sửa
+  const [editNoteTitle, setEditNoteTitle] = useState(''); // Tiêu đề chỉnh sửa
   const [editNoteContent, setEditNoteContent] = useState(''); // Nội dung chỉnh sửa
   const [shareableLinks, setShareableLinks] = useState({});
   const [shareModalVisible, setShareModalVisible] = useState(false); // State để kiểm soát hiển thị Modal
@@ -58,14 +60,16 @@ const NoteList = () => {
     axios
       .post(`http://localhost:3001/api/notes`, {
         userId,
+        title: newNote.title, // Gửi tiêu đề
         content: newNote.content,
         password: newNote.password, // Gửi mật khẩu
       })
       .then((response) => {
         // Cập nhật danh sách ghi chú sau khi thêm ghi chú mới
         setNotes((prevNotes) => [...prevNotes, response.data]);
-        // Xóa nội dung ghi chú và mật khẩu trong form
+        // Xóa nội dung ghi chú, tiêu đề và mật khẩu trong form
         setNewNote({
+          title: '',
           content: '',
           password: '',
         });
@@ -77,13 +81,15 @@ const NoteList = () => {
       });
   };
 
-  const handleEditNote = (noteId, content, password) => {
-    // Thiết lập trạng thái chỉnh sửa và nội dung chỉnh sửa
+  const handleEditNote = (noteId, title, content, password) => {
+    // Thiết lập trạng thái chỉnh sửa và tiêu đề, nội dung chỉnh sửa
     setEditingNote(noteId);
+    setEditNoteTitle(title);
     setEditNoteContent(content);
-    // Đặt mật khẩu cho ghi chú trong newNote
+    // Đặt tiêu đề và mật khẩu cho ghi chú trong newNote
     setNewNote({
-      ...newNote,
+      title,
+      content,
       password,
     });
   };
@@ -92,6 +98,7 @@ const NoteList = () => {
     // Gửi yêu cầu PUT để lưu chỉnh sửa ghi chú
     axios
       .put(`http://localhost:3001/api/notes/${userId}/${editingNote}`, {
+        title: editNoteTitle,
         content: editNoteContent,
         password: newNote.password, // Gửi mật khẩu
       })
@@ -99,11 +106,14 @@ const NoteList = () => {
         // Cập nhật danh sách ghi chú sau khi lưu chỉnh sửa
         setNotes((prevNotes) =>
           prevNotes.map((note) =>
-            note._id === editingNote ? { ...note, content: editNoteContent } : note
+            note._id === editingNote
+              ? { ...note, title: editNoteTitle, content: editNoteContent }
+              : note
           )
         );
         // Đóng modal chỉnh sửa
         setEditingNote(null);
+        setEditNoteTitle('');
         setEditNoteContent('');
         // Xóa mật khẩu trong newNote
         setNewNote({
@@ -144,6 +154,7 @@ const NoteList = () => {
   const handleCancelEditNote = () => {
     // Hủy bỏ chỉnh sửa
     setEditingNote(null);
+    setEditNoteTitle('');
     setEditNoteContent('');
     // Xóa mật khẩu trong newNote
     setNewNote({
@@ -165,9 +176,17 @@ const NoteList = () => {
 
       <Form onFinish={handleAddNote}>
         <Form.Item>
+          <Input
+            type="text"
+            placeholder="Nhập tiêu đề ghi chú"
+            value={newNote.title}
+            onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+          />
+        </Form.Item>
+        <Form.Item>
           <Input.TextArea
             type="text"
-            placeholder="Nhập ghi chú mới"
+            placeholder="Nhập nội dung ghi chú"
             value={newNote.content}
             onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
           />
@@ -192,10 +211,9 @@ const NoteList = () => {
       <List
         dataSource={notes}
         renderItem={(item) => (
-          
           <List.Item
             actions={[
-              <Button type="link" onClick={() => handleEditNote(item._id, item.content, item.password)}>
+              <Button type="link" onClick={() => handleEditNote(item._id, item.title, item.content, item.password)}>
                 Sửa
               </Button>,
               <Button type="link" onClick={() => handleDeleteNote(item._id)}>
@@ -206,6 +224,7 @@ const NoteList = () => {
               </Button>,
             ]}
           >
+            <h3>{item.title}</h3>
             <p style={{ whiteSpace: 'pre-wrap' }}>{item.content}</p>
           </List.Item>
         )}
@@ -218,6 +237,12 @@ const NoteList = () => {
         onCancel={handleCancelEditNote}
         onOk={handleSaveEditNote}
       >
+        <Input
+          type="text"
+          placeholder="Nhập tiêu đề"
+          value={editNoteTitle}
+          onChange={(e) => setEditNoteTitle(e.target.value)}
+        />
         <Input.TextArea
           value={editNoteContent}
           onChange={(e) => setEditNoteContent(e.target.value)}
