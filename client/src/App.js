@@ -5,6 +5,7 @@ import Register from './components/Register';
 import NoteList from './components/NoteList';
 import NoteShare from './components/NoteShare'; 
 import { isUserAuthenticated } from './utils/auth'; 
+import './App.css';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

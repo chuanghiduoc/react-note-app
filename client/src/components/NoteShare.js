@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 
 const NoteShare = () => {
   const { shareableLink } = useParams();
   const [password, setPassword] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [displayContent, setDisplayContent] = useState(false);
-  const [error, setError] = useState('');
 
   const fetchNoteContent = () => {
     axios
@@ -18,10 +17,9 @@ const NoteShare = () => {
       .then((response) => {
         setNoteContent(response.data.content);
         setDisplayContent(true);
-        setError('');
       })
       .catch((err) => {
-        setError('Sai mật khẩu. Vui lòng nhập lại.');
+        message.error('Xác nhận thất bại. Vui lòng kiểm tra lại mật khẩu.');
       });
   };
 
@@ -29,7 +27,7 @@ const NoteShare = () => {
     if (displayContent) {
       fetchNoteContent();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayContent]);
 
   return (
@@ -42,15 +40,19 @@ const NoteShare = () => {
       ) : (
         <div>
           <h2>Nhập Mật Khẩu:</h2>
-          <Input.Password
-            placeholder="Nhập mật khẩu của ghi chú"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+          >
+            <Input.Password
+              placeholder="Nhập mật khẩu của ghi chú"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Item>
           <Button type="primary" onClick={fetchNoteContent}>
             Xác Nhận
           </Button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
       )}
     </div>

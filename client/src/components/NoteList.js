@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-import { Form, Input, Button, List, Modal } from 'antd';
+import { Form, Input, Button, List, Modal, message } from 'antd';
+import '../utils/css/css.css';
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
@@ -44,9 +45,11 @@ const NoteList = () => {
       .then(() => {
         // Cập nhật danh sách ghi chú sau khi xoá
         setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
+        message.success('Xoá ghi chú thành công');
       })
       .catch((error) => {
         console.error('Không thể xóa ghi chú', error);
+        message.error('Xoá ghi chú không thành công');
       });
   };
 
@@ -66,9 +69,11 @@ const NoteList = () => {
           content: '',
           password: '',
         });
+        message.success('Thêm ghi chú thành công');
       })
       .catch((error) => {
         console.error('Không thể thêm ghi chú', error);
+        message.error('Thêm ghi chú không thành công');
       });
   };
 
@@ -105,9 +110,11 @@ const NoteList = () => {
           ...newNote,
           password: '',
         });
+        message.success('Sửa ghi chú thành công');
       })
       .catch((error) => {
         console.error('Không thể lưu chỉnh sửa ghi chú', error);
+        message.error('Sửa ghi chú không thành công');
       });
   };
 
@@ -168,7 +175,7 @@ const NoteList = () => {
         <Form.Item>
           <Input
             type="password"
-            placeholder="Nhập mật khẩu (Tuỳ chọn)"
+            placeholder="Nhập mật khẩu (tuỳ chọn)"
             value={newNote.password}
             onChange={(e) => setNewNote({ ...newNote, password: e.target.value })}
           />
@@ -198,8 +205,7 @@ const NoteList = () => {
               </Button>,
             ]}
           >
-            {item.content}
-
+            <p style={{ whiteSpace: 'pre-wrap' }}>{item.content}</p>
           </List.Item>
         )}
       />
