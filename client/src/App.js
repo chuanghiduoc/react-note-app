@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import NoteList from './components/NoteList';
+import NoteShare from './components/NoteShare'; 
 import { isUserAuthenticated } from './utils/auth'; 
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
           path="/"
           element={isUserAuthenticated() ? <NoteList /> : <Navigate to="/login" />}
         />
+
+        {/* Trang hiển thị ghi chú chia sẻ */}
+        <Route path="/share/:shareableLink" element={<NoteShare />} />
+
         {/* Xử lý các trang ngoại lệ */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

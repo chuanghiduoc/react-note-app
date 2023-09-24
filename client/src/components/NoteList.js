@@ -5,9 +5,15 @@ import { Form, Input, Button, List, Modal } from 'antd';
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState('');
+  const [newNote, setNewNote] = useState({
+    content: '',
+    password: '', // Thêm trường mật khẩu
+  });
   const [editingNote, setEditingNote] = useState(null); // Ghi chú đang chỉnh sửa
   const [editNoteContent, setEditNoteContent] = useState(''); // Nội dung chỉnh sửa
+  const [shareableLinks, setShareableLinks] = useState({});
+  const [shareModalVisible, setShareModalVisible] = useState(false); // State để kiểm soát hiển thị Modal
+  const [shareableLinkId, setShareableLinkId] = useState(null); // Lưu trữ ID của ghi chú đang lấy link chia sẻ
 
   // Lấy username từ localStorage
   const username = localStorage.getItem('username');
@@ -47,22 +53,34 @@ const NoteList = () => {
   const handleAddNote = () => {
     // Gửi yêu cầu POST để thêm ghi chú mới
     axios
-      .post(`http://localhost:3001/api/notes`, { userId, content: newNote })
+      .post(`http://localhost:3001/api/notes`, {
+        userId,
+        content: newNote.content,
+        password: newNote.password, // Gửi mật khẩu
+      })
       .then((response) => {
         // Cập nhật danh sách ghi chú sau khi thêm ghi chú mới
         setNotes((prevNotes) => [...prevNotes, response.data]);
-        // Xóa nội dung ghi chú trong form
-        setNewNote('');
+        // Xóa nội dung ghi chú và mật khẩu trong form
+        setNewNote({
+          content: '',
+          password: '',
+        });
       })
       .catch((error) => {
         console.error('Không thể thêm ghi chú', error);
       });
   };
 
-  const handleEditNote = (noteId, content) => {
+  const handleEditNote = (noteId, content, password) => {
     // Thiết lập trạng thái chỉnh sửa và nội dung chỉnh sửa
     setEditingNote(noteId);
     setEditNoteContent(content);
+    // Đặt mật khẩu cho ghi chú trong newNote
+    setNewNote({
+      ...newNote,
+      password,
+    });
   };
 
   const handleSaveEditNote = () => {
@@ -70,6 +88,7 @@ const NoteList = () => {
     axios
       .put(`http://localhost:3001/api/notes/${userId}/${editingNote}`, {
         content: editNoteContent,
+        password: newNote.password, // Gửi mật khẩu
       })
       .then((response) => {
         // Cập nhật danh sách ghi chú sau khi lưu chỉnh sửa
@@ -81,9 +100,37 @@ const NoteList = () => {
         // Đóng modal chỉnh sửa
         setEditingNote(null);
         setEditNoteContent('');
+        // Xóa mật khẩu trong newNote
+        setNewNote({
+          ...newNote,
+          password: '',
+        });
       })
       .catch((error) => {
         console.error('Không thể lưu chỉnh sửa ghi chú', error);
+      });
+  };
+
+  const handleOpenShareModal = (noteId) => {
+    setShareableLinkId(noteId); // Lưu lại ID của ghi chú được chọn
+    setShareModalVisible(true); // Mở Modal
+  };
+
+  const handleCloseShareModal = () => {
+    setShareableLinkId(null); // Xóa ID của ghi chú
+    setShareModalVisible(false); // Đóng Modal
+  };
+
+  const generateShareableLink = (noteId) => {
+    axios
+      .post(`http://localhost:3001/api/share/${noteId}`)
+      .then((response) => {
+        const link = response.data.shareableLink;
+        setShareableLinks({ ...shareableLinks, [noteId]: link });
+        handleOpenShareModal(noteId); // Mở Modal sau khi có link chia sẻ
+      })
+      .catch((error) => {
+        console.error('Không thể tạo đường dẫn chia sẻ', error);
       });
   };
 
@@ -91,6 +138,11 @@ const NoteList = () => {
     // Hủy bỏ chỉnh sửa
     setEditingNote(null);
     setEditNoteContent('');
+    // Xóa mật khẩu trong newNote
+    setNewNote({
+      ...newNote,
+      password: '',
+    });
   };
 
   const handleLogout = () => {
@@ -109,8 +161,16 @@ const NoteList = () => {
           <Input.TextArea
             type="text"
             placeholder="Nhập ghi chú mới"
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
+            value={newNote.content}
+            onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Input
+            type="password"
+            placeholder="Nhập mật khẩu (Tuỳ chọn)"
+            value={newNote.password}
+            onChange={(e) => setNewNote({ ...newNote, password: e.target.value })}
           />
         </Form.Item>
         <Form.Item>
@@ -127,22 +187,27 @@ const NoteList = () => {
         renderItem={(item) => (
           <List.Item
             actions={[
-              <Button type="link" onClick={() => handleEditNote(item._id, item.content)}>
+              <Button type="link" onClick={() => handleEditNote(item._id, item.content, item.password)}>
                 Sửa
               </Button>,
               <Button type="link" onClick={() => handleDeleteNote(item._id)}>
                 Xoá
               </Button>,
+              <Button type="link" onClick={() => generateShareableLink(item._id)}>
+                Lấy Link Chia Sẻ
+              </Button>,
             ]}
           >
             {item.content}
+
           </List.Item>
         )}
       />
+
       {/* Modal chỉnh sửa ghi chú */}
       <Modal
-        open={editingNote !== null}
         title="Chỉnh Sửa Ghi Chú"
+        open={editingNote !== null}
         onCancel={handleCancelEditNote}
         onOk={handleSaveEditNote}
       >
@@ -150,6 +215,33 @@ const NoteList = () => {
           value={editNoteContent}
           onChange={(e) => setEditNoteContent(e.target.value)}
         />
+        <Input
+          type="password"
+          placeholder="Nhập mật khẩu"
+          value={newNote.password}
+          onChange={(e) => setNewNote({ ...newNote, password: e.target.value })}
+        />
+      </Modal>
+
+      {/* Modal chia sẻ */}
+      <Modal
+        title="Lấy Link Chia Sẻ"
+        open={shareModalVisible}
+        onCancel={handleCloseShareModal}
+        footer={[
+          <Button key="cancel" onClick={handleCloseShareModal}>
+            Đóng
+          </Button>,
+        ]}
+      >
+        {shareableLinks[shareableLinkId] && (
+          <div>
+            Link Chia Sẻ:
+            <a href={`http://localhost:3000/share/${shareableLinks[shareableLinkId]}`}>
+               http://localhost:3000/share/{shareableLinks[shareableLinkId]}
+            </a>
+          </div>
+        )}
       </Modal>
     </div>
   );
