@@ -192,6 +192,7 @@ const NoteList = () => {
       <List
         dataSource={notes}
         renderItem={(item) => (
+          
           <List.Item
             actions={[
               <Button type="link" onClick={() => handleEditNote(item._id, item.content, item.password)}>
@@ -201,7 +202,7 @@ const NoteList = () => {
                 Xoá
               </Button>,
               <Button type="link" onClick={() => generateShareableLink(item._id)}>
-                Lấy Link Chia Sẻ
+                Chia Sẻ
               </Button>,
             ]}
           >
