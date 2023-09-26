@@ -4,13 +4,14 @@ const User = require('../models/User');
 module.exports = async (req, res, next) => {
   try {
     // Lấy token từ tiêu đề yêu cầu
-    // const token = req.headers.authorization;
-    const token = req.header('Authorization').replace('Bearer ', '')
+    const authorizationHeader = req.header('Authorization');
 
-    // Kiểm tra xem token có tồn tại
-    if (!token) {
+    // Kiểm tra xem tiêu đề 'Authorization' có tồn tại
+    if (!authorizationHeader) {
       return res.status(401).json({ message: 'Không có token được cung cấp.' });
     }
+
+    const token = authorizationHeader.replace('Bearer ', '');
 
     // Xác thực token bằng Promises
     const decodedToken = await new Promise((resolve, reject) => {

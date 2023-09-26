@@ -7,9 +7,9 @@ import '../utils/css/css.css';
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({
-    title: '', // Thêm trường tiêu đề
+    title: '',
     content: '',
-    password: '', // Thêm trường mật khẩu
+    password: '', 
   });
   const [editingNote, setEditingNote] = useState(null); // Ghi chú đang chỉnh sửa
   const [editNoteTitle, setEditNoteTitle] = useState(''); // Tiêu đề chỉnh sửa
@@ -31,19 +31,27 @@ const NoteList = () => {
   useEffect(() => {
     // Gửi yêu cầu GET để lấy danh sách các ghi chú của người dùng
     axios
-      .get(`http://localhost:3001/api/notes/${userId}`)
+      .get(`http://localhost:3001/api/notes/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setNotes(response.data);
       })
       .catch((error) => {
         console.error('Không tìm nạp được ghi chú', error);
       });
-  }, [userId]);
+  }, [token, userId]);
 
   const handleDeleteNote = (noteId) => {
     // Gửi yêu cầu DELETE để xoá ghi chú
     axios
-      .delete(`http://localhost:3001/api/notes/${userId}/${noteId}`)
+      .delete(`http://localhost:3001/api/notes/${userId}/${noteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         // Cập nhật danh sách ghi chú sau khi xoá
         setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
@@ -63,6 +71,11 @@ const NoteList = () => {
         title: newNote.title, // Gửi tiêu đề
         content: newNote.content,
         password: newNote.password, // Gửi mật khẩu
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((response) => {
         // Cập nhật danh sách ghi chú sau khi thêm ghi chú mới
@@ -101,6 +114,11 @@ const NoteList = () => {
         title: editNoteTitle,
         content: editNoteContent,
         password: newNote.password, // Gửi mật khẩu
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((response) => {
         // Cập nhật danh sách ghi chú sau khi lưu chỉnh sửa
@@ -140,7 +158,11 @@ const NoteList = () => {
 
   const generateShareableLink = (noteId) => {
     axios
-      .post(`http://localhost:3001/api/share/${noteId}`)
+      .post(`http://localhost:3001/api/share/${noteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         const link = response.data.shareableLink;
         setShareableLinks({ ...shareableLinks, [noteId]: link });
