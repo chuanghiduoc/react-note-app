@@ -31,10 +31,12 @@ mongoose.connection.on('error', (err) => {
 const protectedRoute = require('./routes/protectedRoute');
 const authRoutes = require('./routes/authRoutes');
 const noteRoutes = require('./routes/noteRoutes'); 
+const adminRoutes = require('./routes/adminRoutes');
 
 app.use('/api/auth', authRoutes);
-app.use('/api/protected', protectedRoute);
+app.use('/api/user', protectedRoute);
 app.use('/api', noteRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Start the server
 app.listen(port, () => {
