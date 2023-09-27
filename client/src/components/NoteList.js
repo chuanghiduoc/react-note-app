@@ -158,7 +158,7 @@ const NoteList = () => {
 
   const generateShareableLink = (noteId) => {
     axios
-      .post(`http://localhost:3001/api/share/${noteId}`, {
+      .post(`http://localhost:3001/api/share/${userId}/${noteId}`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
