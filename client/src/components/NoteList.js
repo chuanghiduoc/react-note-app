@@ -28,6 +28,16 @@ const NoteList = () => {
   const userId = decodedToken.userId;
 
   useEffect(() => {
+    if (token) {
+      const decodedToken = jwt_decode(token);
+        const currentTime = Date.now() / 1000;
+      if (decodedToken.exp < currentTime) {
+        handleLogout();
+      }
+    }
+  }, [token]);
+
+  useEffect(() => {
     // Gửi yêu cầu GET để lấy danh sách các ghi chú của người dùng
     axios
       .get(`http://localhost:3001/api/notes/${userId}`, {
