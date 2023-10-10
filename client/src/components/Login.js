@@ -22,7 +22,7 @@ const Login = () => {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', values.username);
       localStorage.setItem('role', response.data.role);
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 3);
     } catch (error) {
       console.error('Đăng nhập thất bại', error);
       message.error('Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.');

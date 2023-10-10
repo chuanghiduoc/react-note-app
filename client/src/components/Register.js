@@ -21,7 +21,7 @@ const Register = () => {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', values.username);
       localStorage.setItem('role', response.data.role);
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 3);
     } catch (error) {
       console.error('Đăng ký thất bại', error);
       message.error('Đăng ký thất bại. Vui lòng thử lại sau.');
