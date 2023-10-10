@@ -3,8 +3,10 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { Form, Input, Button, List, Modal, message } from 'antd';
 import '../utils/css/css.css';
+import { useNavigate } from 'react-router-dom';
 
 const NoteList = () => {
+  const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({
     title: '',
@@ -23,7 +25,7 @@ const NoteList = () => {
 
   // Lấy token từ localStorage
   const token = localStorage.getItem('token');
-
+  const role = localStorage.getItem("role");
   // Giải mã token để lấy userId
   const decodedToken = jwt_decode(token);
   const userId = decodedToken.userId;
@@ -192,7 +194,9 @@ const NoteList = () => {
     // Làm mới trang sau khi đăng xuất
     window.location.reload();
   };
-
+  const handleAdmin = ()=>{
+    navigate("/admin");
+  };
   return (
     <div>
       <h2>Hi, {username} - Mời thí chủ test</h2>
@@ -229,6 +233,11 @@ const NoteList = () => {
           <Button type="link" danger onClick={handleLogout}>
             Đăng Xuất
           </Button>
+          {role === 'admin' && (
+            <Button type="primary" onClick={handleAdmin}>
+              Trang quản lý
+            </Button>
+          )}
         </Form.Item>
       </Form>
       <List
