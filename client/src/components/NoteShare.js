@@ -6,7 +6,7 @@ import { Form, Input, Button, message } from 'antd';
 const NoteShare = () => {
   const { shareableLink } = useParams();
   const [password, setPassword] = useState('');
-  const [noteTitle, setNoteTitle] = useState(''); // Thêm state cho nhan đề
+  const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [displayContent, setDisplayContent] = useState(false);
 
