@@ -38,7 +38,7 @@ const noteController = {
       const savedNote = await newNote.save();
       res.json(savedNote);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to add note' });
+      res.status(500).json({ error: 'Không thể thêm ghi chú' });
     }
   },
 
@@ -54,7 +54,7 @@ const noteController = {
       }));
       res.json(sanitizedNotes);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch notes' });
+      res.status(500).json({ error: 'Không tìm nạp được ghi chú' });
     }
   },
 
@@ -64,12 +64,12 @@ const noteController = {
       const noteId = req.params.noteId;
       const deletedNote = await Note.findOneAndDelete({ _id: noteId, userId });
       if (deletedNote) {
-        res.json({ message: 'Note deleted successfully' });
+        res.json({ message: 'Đã xóa ghi chú thành công' });
       } else {
-        res.status(404).json({ error: 'Note not found' });
+        res.status(404).json({ error: 'Không tìm thấy ghi chú' });
       }
     } catch (error) {
-      res.status(500).json({ error: 'Failed to delete note' });
+      res.status(500).json({ error: 'Không thể xóa ghi chú' });
     }
   },
 
@@ -88,10 +88,10 @@ const noteController = {
       if (updatedNote) {
         res.json(updatedNote);
       } else {
-        res.status(404).json({ error: 'Note not found' });
+        res.status(404).json({ error: 'Không tìm thấy ghi chú' });
       }
     } catch (error) {
-      res.status(500).json({ error: 'Failed to update note' });
+      res.status(500).json({ error: 'Không cập nhật được ghi chú' });
     }
   },
 
@@ -103,12 +103,12 @@ const noteController = {
       const note = await Note.findOne({ _id: noteId });
 
       if (!note) {
-        return res.status(404).json({ error: 'Note not found' });
+        return res.status(404).json({ error: 'Không tìm thấy ghi chú' });
       }
 
       res.json({ shareableLink: note.shareableLink });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create shareable link' });
+      res.status(500).json({ error: 'Không tạo được liên kết có thể chia sẻ' });
     }
   },
 
@@ -120,21 +120,21 @@ const noteController = {
       const note = await Note.findOne({ shareableLink });
 
       if (!note) {
-        return res.status(404).json({ error: 'Note not found' });
+        return res.status(404).json({ error: 'Không tìm thấy ghi chú' });
       }
 
       const { password } = req.query;
       if (!password) {
-        return res.status(401).json({ error: 'Password is required' });
+        return res.status(401).json({ error: 'Cần có mật khẩu' });
       }
 
       if (note.password !== password) {
-        return res.status(401).json({ error: 'Invalid password' });
+        return res.status(401).json({ error: 'Mật khẩu không hợp lệ' });
       }
 
       res.json({ title: note.title, content: note.content });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to access note' });
+      res.status(500).json({ error: 'Không thể truy cập ghi chú' });
     }
   },
 };

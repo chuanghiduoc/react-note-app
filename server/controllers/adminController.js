@@ -34,7 +34,7 @@ const adminController = {
       // Trả về thông tin dưới dạng JSON
       res.json({ usersInfo, totalNotes });
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch user and notes info" });
+      res.status(500).json({ error: "Không tìm nạp được thông tin người dùng và ghi chú" });
     }
   },
   changePassword: async (req, res) => {
