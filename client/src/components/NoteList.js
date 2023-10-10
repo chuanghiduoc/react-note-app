@@ -203,7 +203,7 @@ const NoteList = () => {
   };
   return (
     <div>
-      <h2>Hi, {username} - Mời thí chủ test</h2>
+      <h2>Hi, {username} - Hãy tận hưởng cuộc sống!</h2>
 
       <Form onFinish={handleAddNote}>
         <Form.Item
