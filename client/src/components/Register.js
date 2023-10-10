@@ -17,11 +17,12 @@ const Register = () => {
       // Nếu thành công, chuyển hướng đến trang `/login`
       // navigate('/login');
 
-      //register xong tự login bằng token vào home
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', values.username);
       localStorage.setItem('role', response.data.role);
-      setTimeout(() => window.location.reload(), 3);
+
+      message.success('Đăng kí thành công');
+      setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       console.error('Đăng ký thất bại', error);
       message.error('Đăng ký thất bại. Vui lòng thử lại sau.');

@@ -195,7 +195,8 @@ const NoteList = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("role");
-    window.location.reload();
+    message.success("Đăng xuất thành công");
+    setTimeout(() => window.location.reload(), 1000);
   };
   const handleAdmin = () => {
     navigate("/admin");
