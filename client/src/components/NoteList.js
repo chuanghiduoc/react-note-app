@@ -13,17 +13,14 @@ const NoteList = () => {
     content: '',
     password: '', 
   });
-  const [editingNote, setEditingNote] = useState(null); // Ghi chú đang chỉnh sửa
-  const [editNoteTitle, setEditNoteTitle] = useState(''); // Tiêu đề chỉnh sửa
-  const [editNoteContent, setEditNoteContent] = useState(''); // Nội dung chỉnh sửa
+  const [editingNote, setEditingNote] = useState(null);
+  const [editNoteTitle, setEditNoteTitle] = useState('');
+  const [editNoteContent, setEditNoteContent] = useState('');
   const [shareableLinks, setShareableLinks] = useState({});
-  const [shareModalVisible, setShareModalVisible] = useState(false); // State để kiểm soát hiển thị Modal
-  const [shareableLinkId, setShareableLinkId] = useState(null); // Lưu trữ ID của ghi chú đang lấy link chia sẻ
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [shareableLinkId, setShareableLinkId] = useState(null);
 
-  // Lấy username từ localStorage
   const username = localStorage.getItem('username');
-
-  // Lấy token từ localStorage
   const token = localStorage.getItem('token');
   const role = localStorage.getItem("role");
   // Giải mã token để lấy userId
@@ -70,9 +67,9 @@ const NoteList = () => {
     axios
       .post(`http://localhost:3001/api/notes`, {
         userId,
-        title: newNote.title, // Gửi tiêu đề
+        title: newNote.title, 
         content: newNote.content,
-        password: newNote.password, // Gửi mật khẩu
+        password: newNote.password,
       },
       {
         headers: {
@@ -101,7 +98,6 @@ const NoteList = () => {
     setEditingNote(noteId);
     setEditNoteTitle(title);
     setEditNoteContent(content);
-    // Đặt tiêu đề và mật khẩu cho ghi chú trong newNote
     setNewNote({
       title,
       content,
@@ -115,7 +111,7 @@ const NoteList = () => {
       .put(`http://localhost:3001/api/notes/${userId}/${editingNote}`, {
         title: editNoteTitle,
         content: editNoteContent,
-        password: newNote.password, // Gửi mật khẩu
+        password: newNote.password, 
       },
       {
         headers: {
@@ -191,7 +187,6 @@ const NoteList = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     localStorage.removeItem('role');
-    // Làm mới trang sau khi đăng xuất
     window.location.reload();
   };
   const handleAdmin = ()=>{

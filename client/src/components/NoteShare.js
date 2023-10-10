@@ -17,7 +17,7 @@ const NoteShare = () => {
       })
       .then((response) => {
         const { title, content } = response.data;
-        setNoteTitle(title); // Cập nhật state nhan đề từ phản hồi của API
+        setNoteTitle(title);
         setNoteContent(content);
         setDisplayContent(true);
       })
@@ -37,7 +37,7 @@ const NoteShare = () => {
     <div>
       {displayContent ? (
         <div>
-          <h1>{noteTitle}</h1> {/* Hiển thị nhan đề */}
+          <h1>{noteTitle}</h1>
           <p style={{ whiteSpace: 'pre-wrap' }}>{noteContent}</p>
         </div>
       ) : (

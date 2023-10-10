@@ -15,7 +15,6 @@ class AdminDashboard extends Component {
   }
 
   componentDidMount() {
-    // Kiểm tra trong localStorage nếu người dùng đã đăng nhập
     const token = localStorage.getItem('token');
     if (!token) {
       // Người dùng chưa đăng nhập, chuyển hướng về trang đăng nhập
