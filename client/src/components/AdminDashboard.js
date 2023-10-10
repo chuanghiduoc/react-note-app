@@ -11,6 +11,7 @@ class AdminDashboard extends Component {
       newPassword: '',
       userIdToChangePassword: '', 
       isChangePasswordModalVisible: false,
+      selectedUserNotes: [],
     };
   }
 
@@ -35,7 +36,15 @@ class AdminDashboard extends Component {
         });
     }
   }
-
+  showUserNotes = (userId) => {
+    // Tìm người dùng theo userId
+    const selectedUser = this.state.usersInfo.find((user) => user.userId === userId);
+    if (selectedUser) {
+      this.setState({
+        selectedUserNotes: selectedUser.notesContent,
+      });
+    }
+  };
   // Mở modal thay đổi mật khẩu và lưu ID của người dùng cần thay đổi
   showChangePasswordModal = (userId) => {
     this.setState({
@@ -91,7 +100,7 @@ class AdminDashboard extends Component {
   };
 
   render() {
-    const { usersInfo, totalNotes, newPassword, isChangePasswordModalVisible } = this.state;
+    const { usersInfo, totalNotes, newPassword, isChangePasswordModalVisible, selectedUserNotes } = this.state;
 
     const columns = [
       {
@@ -112,6 +121,9 @@ class AdminDashboard extends Component {
             <Button type="primary" onClick={() => this.showChangePasswordModal(record.userId)}>
               Thay đổi mật khẩu
             </Button>
+            <Button onClick={() => this.showUserNotes(record.userId)}>
+              Xem ghi chú
+            </Button>
           </Space>
         ),
       },
@@ -122,6 +134,19 @@ class AdminDashboard extends Component {
         <h1>Admin Dashboard</h1>
         <p>Total Notes: {totalNotes}</p>
         <Table dataSource={usersInfo} columns={columns} />
+        <Modal
+          title={`Nội dung ghi chú của người dùng`}
+          open={selectedUserNotes.length > 0}
+          onCancel={() => this.setState({ selectedUserNotes: [] })}
+          footer={null}
+        >
+          {selectedUserNotes.map((note, index) => (
+            <div key={index}>
+              <h3>Ghi chú {index + 1}</h3>
+              <p>{note}</p>
+            </div>
+          ))}
+        </Modal>
         <Modal
           title="Thay đổi mật khẩu"
           open={isChangePasswordModalVisible}
