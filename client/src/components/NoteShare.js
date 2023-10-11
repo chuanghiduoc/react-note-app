@@ -45,7 +45,7 @@ const NoteShare = () => {
           <h2>Nhập Mật Khẩu:</h2>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+            rules={[{ required: false }]} 
           >
             <Input.Password
               placeholder="Nhập mật khẩu của ghi chú"

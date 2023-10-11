@@ -124,9 +124,9 @@ const noteController = {
       }
 
       const { password } = req.query;
-      if (!password) {
-        return res.status(401).json({ error: 'Cần có mật khẩu' });
-      }
+      // if (!password) {
+      //   return res.status(401).json({ error: 'Cần có mật khẩu' });
+      // }
 
       if (note.password !== password) {
         return res.status(401).json({ error: 'Mật khẩu không hợp lệ' });
