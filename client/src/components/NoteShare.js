@@ -28,6 +28,7 @@ const NoteShare = () => {
 
   useEffect(() => {
     if (displayContent) {
+      message.success("Xác thực mật khẩu thành công");
       fetchNoteContent();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
