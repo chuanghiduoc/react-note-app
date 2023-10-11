@@ -143,7 +143,7 @@ class AdminDashboard extends Component {
           {selectedUserNotes.map((note, index) => (
             <div key={index}>
               <h3>Ghi chú {index + 1}</h3>
-              <p>{note}</p>
+              <p style={{ whiteSpace: "pre-wrap" }}>{note}</p>
             </div>
           ))}
         </Modal>
