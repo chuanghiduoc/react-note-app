@@ -115,23 +115,32 @@ const noteController = {
   accessNoteByShareableLink: async (req, res) => {
     try {
       const shareableLink = req.params.shareableLink;
-
+  
       // Tìm ghi chú dựa trên đường dẫn chia sẻ
       const note = await Note.findOne({ shareableLink });
-
+  
       if (!note) {
         return res.status(404).json({ error: 'Không tìm thấy ghi chú' });
       }
-
+  
       const { password } = req.query;
-      // if (!password) {
-      //   return res.status(401).json({ error: 'Cần có mật khẩu' });
-      // }
-
+  
+      // Kiểm tra xem ghi chú có password hay không
+      if (!note.password) {
+        // Nếu không có password, hiển thị nội dung ngay lập tức
+        return res.json({ title: note.title, content: note.content });
+      }
+  
+      // Nếu có password, kiểm tra mật khẩu
+      if (!password) {
+        return res.status(401).json({ error: 'Cần có mật khẩu' });
+      }
+  
       if (note.password !== password) {
         return res.status(401).json({ error: 'Mật khẩu không hợp lệ' });
       }
-
+  
+      // Nếu mật khẩu đúng, hiển thị nội dung
       res.json({ title: note.title, content: note.content });
     } catch (error) {
       res.status(500).json({ error: 'Không thể truy cập ghi chú' });

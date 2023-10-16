@@ -19,6 +19,11 @@ const NoteList = () => {
   const [shareableLinks, setShareableLinks] = useState({});
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [shareableLinkId, setShareableLinkId] = useState(null);
+  const [updatePasswordModalVisible, setUpdatePasswordModalVisible] =
+    useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
+
 
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
@@ -30,7 +35,7 @@ const NoteList = () => {
   useEffect(() => {
     if (token) {
       const decodedToken = jwt_decode(token);
-        const currentTime = Date.now() / 1000;
+      const currentTime = Date.now() / 1000;
       if (decodedToken.exp < currentTime) {
         handleLogout();
       }
@@ -211,9 +216,53 @@ const NoteList = () => {
   const handleAdmin = () => {
     navigate("/admin");
   };
+  const handleUpdatePassword = (noteId) => {
+    setSelectedNoteId(noteId);
+    setUpdatePasswordModalVisible(true);
+  };
+
+  const handleCloseUpdatePasswordModal = () => {
+    setUpdatePasswordModalVisible(false);
+  };
+  
+  const handleUpdatePasswordSubmit = () => {
+    if (selectedNoteId) {
+      // Gửi yêu cầu PUT để cập nhật mật khẩu ghi chú
+      axios
+        .put(
+          `http://localhost:3001/api/notes/${userId}/${selectedNoteId}`,
+          {
+            password: newPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          // Cập nhật danh sách ghi chú sau khi cập nhật mật khẩu
+          setNotes((prevNotes) =>
+            prevNotes.map((note) =>
+              note._id === selectedNoteId ? { ...note, password: newPassword } : note
+            )
+          );
+          // Đóng modal cập nhật mật khẩu
+          setUpdatePasswordModalVisible(false);
+          // Xóa mật khẩu mới
+          setNewPassword("");
+          setSelectedNoteId(null);
+          message.success("Cập nhật mật khẩu thành công");
+        })
+        .catch((error) => {
+          console.error("Không thể cập nhật mật khẩu ghi chú", error);
+          message.error("Cập nhật mật khẩu không thành công");
+        });
+    }
+  };
   return (
     <div>
-      <h2>Hi, {username} - Hãy tận hưởng cuộc sống!</h2>
+      <h2>Hi, {username} - Hôm nay là một ngày đẹp trời</h2>
 
       <Form onFinish={handleAddNote}>
         <Form.Item
@@ -292,6 +341,12 @@ const NoteList = () => {
               >
                 Sửa
               </Button>,
+              <Button
+                type="link"
+                onClick={() => handleUpdatePassword(item._id)}
+              >
+                Cập nhật mật khẩu
+              </Button>,
               <Button type="link" onClick={() => handleDeleteNote(item._id)}>
                 Xoá
               </Button>,
@@ -355,6 +410,19 @@ const NoteList = () => {
             </a>
           </div>
         )}
+      </Modal>
+      <Modal
+        title="Cập nhật Mật khẩu"
+        open={updatePasswordModalVisible}
+        onOk={handleUpdatePasswordSubmit}
+        onCancel={handleCloseUpdatePasswordModal}
+      >
+        <Input
+          type="password"
+          placeholder="Nhập mật khẩu mới"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
       </Modal>
     </div>
   );

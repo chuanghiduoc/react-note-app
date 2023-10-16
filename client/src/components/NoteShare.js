@@ -9,6 +9,7 @@ const NoteShare = () => {
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [displayContent, setDisplayContent] = useState(false);
+  const [hasPassword, setHasPassword] = useState(true); 
 
   const fetchNoteContent = () => {
     axios
@@ -20,19 +21,29 @@ const NoteShare = () => {
         setNoteTitle(title);
         setNoteContent(content);
         setDisplayContent(true);
+        message.success('Xác thực mật khẩu thành công');
       })
       .catch((err) => {
-        message.error('Xác nhận thất bại. Vui lòng kiểm tra lại mật khẩu.');
+        message.error('Xác thực thất bại. Vui lòng kiểm tra lại mật khẩu.');
       });
   };
 
   useEffect(() => {
-    if (displayContent) {
-      message.success("Xác thực mật khẩu thành công");
-      fetchNoteContent();
-    }
+    axios.get(`http://localhost:3001/api/share/${shareableLink}`)
+      .then((response) => {
+        const { password } = response.data;
+        if (!password) {
+          setHasPassword(false);
+          fetchNoteContent();
+        } else {
+          setHasPassword(true);
+        }
+      })
+      .catch((err) => {
+        setHasPassword(true);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayContent]);
+  }, [shareableLink]);
 
   return (
     <div>
@@ -41,13 +52,10 @@ const NoteShare = () => {
           <h1>{noteTitle}</h1>
           <p style={{ whiteSpace: 'pre-wrap' }}>{noteContent}</p>
         </div>
-      ) : (
+      ) : hasPassword ? (
         <div>
           <h2>Nhập Mật Khẩu:</h2>
-          <Form.Item
-            name="password"
-            rules={[{ required: false }]} 
-          >
+          <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}>
             <Input.Password
               placeholder="Nhập mật khẩu của ghi chú"
               value={password}
@@ -58,7 +66,7 @@ const NoteShare = () => {
             Xác Nhận
           </Button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
