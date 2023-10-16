@@ -24,7 +24,6 @@ const NoteList = () => {
   const [newPassword, setNewPassword] = useState("");
   const [selectedNoteId, setSelectedNoteId] = useState(null);
 
-
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -224,7 +223,7 @@ const NoteList = () => {
   const handleCloseUpdatePasswordModal = () => {
     setUpdatePasswordModalVisible(false);
   };
-  
+
   const handleUpdatePasswordSubmit = () => {
     if (selectedNoteId) {
       // Gửi yêu cầu PUT để cập nhật mật khẩu ghi chú
@@ -244,7 +243,9 @@ const NoteList = () => {
           // Cập nhật danh sách ghi chú sau khi cập nhật mật khẩu
           setNotes((prevNotes) =>
             prevNotes.map((note) =>
-              note._id === selectedNoteId ? { ...note, password: newPassword } : note
+              note._id === selectedNoteId
+                ? { ...note, password: newPassword }
+                : note
             )
           );
           // Đóng modal cập nhật mật khẩu
@@ -376,10 +377,13 @@ const NoteList = () => {
           placeholder="Nhập tiêu đề"
           value={editNoteTitle}
           onChange={(e) => setEditNoteTitle(e.target.value)}
+          style={{ marginBottom: '10px' }}
         />
         <Input.TextArea
           value={editNoteContent}
           onChange={(e) => setEditNoteContent(e.target.value)}
+          rows={10}
+          style={{ marginBottom: '10px' }}
         />
         <Input
           type="password"
