@@ -30,7 +30,7 @@ const Login = () => {
       message.success("Đăng nhập thành công");
 
       // Reload trang sau 3 giây
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => window.location.reload(), 500);
     } catch (error) {
       console.error("Đăng nhập thất bại", error);
       message.error(

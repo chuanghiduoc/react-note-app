@@ -22,7 +22,7 @@ const Register = () => {
       localStorage.setItem('role', response.data.role);
 
       message.success('Đăng kí thành công');
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => window.location.reload(), 500);
     } catch (error) {
       console.error('Đăng ký thất bại', error);
       message.error('Đăng ký thất bại. Vui lòng thử lại sau.');

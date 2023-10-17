@@ -141,7 +141,6 @@ const NoteList = () => {
         }
       )
       .then((response) => {
-        // Cập nhật danh sách ghi chú sau khi lưu chỉnh sửa
         setNotes((prevNotes) =>
           prevNotes.map((note) =>
             note._id === editingNote
@@ -149,11 +148,9 @@ const NoteList = () => {
               : note
           )
         );
-        // Đóng modal chỉnh sửa
         setEditingNote(null);
         setEditNoteTitle("");
         setEditNoteContent("");
-        // Xóa mật khẩu trong newNote
         setNewNote({
           ...newNote,
           password: "",
@@ -167,13 +164,13 @@ const NoteList = () => {
   };
 
   const handleOpenShareModal = (noteId) => {
-    setShareableLinkId(noteId); // Lưu lại ID của ghi chú được chọn
-    setShareModalVisible(true); // Mở Modal
+    setShareableLinkId(noteId); 
+    setShareModalVisible(true); 
   };
 
   const handleCloseShareModal = () => {
-    setShareableLinkId(null); // Xóa ID của ghi chú
-    setShareModalVisible(false); // Đóng Modal
+    setShareableLinkId(null); 
+    setShareModalVisible(false); 
   };
 
   const generateShareableLink = (noteId) => {
@@ -186,7 +183,7 @@ const NoteList = () => {
       .then((response) => {
         const link = response.data.shareableLink;
         setShareableLinks({ ...shareableLinks, [noteId]: link });
-        handleOpenShareModal(noteId); // Mở Modal sau khi có link chia sẻ
+        handleOpenShareModal(noteId); 
       })
       .catch((error) => {
         console.error("Không thể tạo đường dẫn chia sẻ", error);
@@ -194,11 +191,9 @@ const NoteList = () => {
   };
 
   const handleCancelEditNote = () => {
-    // Hủy bỏ chỉnh sửa
     setEditingNote(null);
     setEditNoteTitle("");
     setEditNoteContent("");
-    // Xóa mật khẩu trong newNote
     setNewNote({
       ...newNote,
       password: "",
@@ -210,7 +205,7 @@ const NoteList = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("role");
     message.success("Đăng xuất thành công");
-    setTimeout(() => window.location.reload(), 1000);
+    setTimeout(() => window.location.reload(), 500);
   };
   const handleAdmin = () => {
     navigate("/admin");
@@ -240,7 +235,6 @@ const NoteList = () => {
           }
         )
         .then((response) => {
-          // Cập nhật danh sách ghi chú sau khi cập nhật mật khẩu
           setNotes((prevNotes) =>
             prevNotes.map((note) =>
               note._id === selectedNoteId
@@ -248,9 +242,7 @@ const NoteList = () => {
                 : note
             )
           );
-          // Đóng modal cập nhật mật khẩu
           setUpdatePasswordModalVisible(false);
-          // Xóa mật khẩu mới
           setNewPassword("");
           setSelectedNoteId(null);
           message.success("Cập nhật mật khẩu thành công");
@@ -346,7 +338,7 @@ const NoteList = () => {
                 type="link"
                 onClick={() => handleUpdatePassword(item._id)}
               >
-                Cập nhật mật khẩu
+                Khoá
               </Button>,
               <Button type="link" onClick={() => handleDeleteNote(item._id)}>
                 Xoá
